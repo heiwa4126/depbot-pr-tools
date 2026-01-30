@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 自分の GitHub repositories を全部スキャンして、
 # Dependabot の PR を JSON 形式でリストするスクリプト
-# PRはマージ可能なものだけ抽出する
+# PRはマージ可能でないものだけ抽出する
 
 set -euo pipefail
 
@@ -23,7 +23,7 @@ gh api graphql -f query='
   }
 ' | jq '
   .data.search.nodes
-  | map(select(.mergeable == "MERGEABLE"))
+  | map(select(.mergeable != "MERGEABLE"))
   | group_by(.repository.nameWithOwner)
   | map({
       repository: .[0].repository.nameWithOwner,
